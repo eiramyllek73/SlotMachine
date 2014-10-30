@@ -1,13 +1,40 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slot Machine</title>
+    <script src="http://code.createjs.com/createjs-2013.12.12.min.js"></script>
+    <script>
+        var stage;
+        var queue;
+
+        function init()
+        {
+            stage = new createjs.Stage("myCanvas");
+            var slotmachine = new createjs.Bitmap();
+            slotmachine.image("images/slotmachine1.png").
+            slotmachine.x = 50;
+            slotmachine.y = 50;
+
+            stage.addChild(slotmachine);
+            queue = new createjs.LoadQueue();
+            queue.installPlugin(createjs.Sound);
+            queue.addEventListener("complete", handleComplete);
+            queue.loadManifest([{ id: "slotmachine", src: "images/slotmachine1.png" }, { id: "sound", src: "sounds/welcome.wav" }]);
+        }
+
+        function handleComplete(event)
+        {
+
+
+            
+        }
+    </script>
     <!-- CSS Section -->
     <link href="css/main.css" rel="stylesheet" />
 </head>
-<body>
+<body onload="init()">
     <div>
         <h1>The ProGambler!!</h1>
         <div>
@@ -32,6 +59,9 @@
     </div>
     <div id="result">
         <h2>Spin Result</h2>
+        <canvas id="myCanvas" width="500" height="500">
+            Alternative Content
+        </canvas>
         <hr />
         <p></p>
     </div>

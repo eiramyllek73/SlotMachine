@@ -66,6 +66,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="css\main.css" />
+    <Content Include="css\reset.css" />
+    <Content Include="humans.txt" />
+    <Content Include="icons\fi-address-book.svg" />
+    <Content Include="icons\fi-female-symbol.svg" />
+    <Content Include="icons\fi-social-facebook.svg" />
+    <Content Include="icons\fi-social-github.svg" />
+    <Content Include="icons\fi-social-instagram.svg" />
+    <Content Include="icons\fi-social-linkedin.svg" />
+    <Content Include="icons\fi-social-pinterest.svg" />
+    <Content Include="icons\fi-social-stumbleupon.svg" />
+    <Content Include="icons\fi-social-twitter.svg" />
     <Content Include="images\bet100Button.png" />
     <Content Include="images\bet10Button.png" />
     <Content Include="images\bet1Button.png" />
@@ -75,7 +86,6 @@
     <Content Include="images\betLine.png" />
     <Content Include="images\betWindow.png" />
     <Content Include="images\blank.png" />
-    <Content Include="images\blueButton.png" />
     <Content Include="images\creditsWindow.png" />
     <Content Include="images\css3logo.png" />
     <Content Include="images\exitButton.png" />
@@ -91,11 +101,17 @@
     <Content Include="images\Reddit.png" />
     <Content Include="images\resetButton.png" />
     <Content Include="images\slotmachine1.png" />
-    <Content Include="images\tealButton.png" />
-    <Content Include="images\yellowButton.png" />
     <Content Include="index.html" />
     <Content Include="js\jquery.js" />
     <Content Include="js\main.js" />
+    <Content Include="js\slotMachine.js" />
+    <Content Include="lib\createJS.js" />
+    <Content Include="lib\easelJS.js" />
+    <Content Include="lib\preloadJS.js" />
+    <Content Include="lib\soundJS.js" />
+    <Content Include="lib\tweenJS.js" />
+    <Content Include="privacypolicy.html" />
+    <Content Include="robots.txt" />
     <Content Include="sounds\button.wav" />
     <Content Include="sounds\cashOut.mp3" />
     <Content Include="sounds\cashOut.wav" />
@@ -104,6 +120,7 @@
     <Content Include="sounds\welcome.wav" />
     <Content Include="sounds\youLose.wav" />
     <Content Include="sounds\youWon.wav" />
+    <Content Include="terms_and_conditions.html" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

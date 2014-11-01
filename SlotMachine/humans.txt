@@ -1,0 +1,11 @@
+/* Personal Portfolio website for Georgian College COPA Student Kelly McAlpine - Barrie ON Canada */
+/* webdesign4.georgianc.on.ca/~200269425/portfolio/kellymcalpine.html */
+/* responsive framework made possible by Foundation opensource */
+/* Foundation was made by ZURB, an interaction design and design strategy firm in Campbell, CA */
+/* zurb.com */
+/* humanstxt.org */
+
+/* SITE */
+  Standards: HTML5, CSS3
+  Components: jQuery, Orbit, Reveal
+  Software: Microsoft VS Ultimate, Git, Sass

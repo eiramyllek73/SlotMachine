@@ -1,42 +1,21 @@
-﻿<!DOCTYPE html>
+﻿<!--File Name: index.html-->
+<!--Author: Kelly McAlpine #200269425-->
+<!--Website Name: The 'Programmbler' Slot-Machine-->
+<!--Purpose: A slot-machine game created with HTML5 and createJS-->
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slot Machine</title>
-    <script src="http://code.createjs.com/createjs-2013.12.12.min.js"></script>
-    <script>
-        var stage;
-        var queue;
-
-        function init()
-        {
-            stage = new createjs.Stage("myCanvas");
-            var slotmachine = new createjs.Bitmap();
-            slotmachine.image("images/slotmachine1.png").
-            slotmachine.x = 50;
-            slotmachine.y = 50;
-
-            stage.addChild(slotmachine);
-            queue = new createjs.LoadQueue();
-            queue.installPlugin(createjs.Sound);
-            queue.addEventListener("complete", handleComplete);
-            queue.loadManifest([{ id: "slotmachine", src: "images/slotmachine1.png" }, { id: "sound", src: "sounds/welcome.wav" }]);
-        }
-
-        function handleComplete(event)
-        {
-
-
-            
-        }
-    </script>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
+    <title>The 'Programmbler' Slot-Machine</title>
     <!-- CSS Section -->
+    <link href="css/reset.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
 </head>
-<body onload="init()">
+<body>
+    <canvas id="slotCanvas" width="950" height="780"></canvas>
     <div>
-        <h1>The ProGambler!!</h1>
+        <h1>Slot Machine</h1>
         <div>
             <h2>Player Statistics</h2>
             <hr />
@@ -59,9 +38,6 @@
     </div>
     <div id="result">
         <h2>Spin Result</h2>
-        <canvas id="myCanvas" width="500" height="500">
-            Alternative Content
-        </canvas>
         <hr />
         <p></p>
     </div>
@@ -69,8 +45,44 @@
     <div id="winOrLose">
         <p></p>
     </div>
+    <footer class="row">
+        <div class="large-12 columns">
+            <div class="panel">
+                <h4>Social Media Anyone?</h4>
+
+                <div class="row">
+                    <div class="large-12 columns">
+                        <p>I'm all over the net like a dog on a bone.</p>
+                    </div>
+                    <div class="icon-bar large-12 columns">
+                        <a class="item" href="ca.linkedin.com/in/kellymcalpine/" title="LinkedIn"><img src="icons/fi-social-linkedin.svg" alt="Linkedin Icon" /></a>
+                        <a class="item" href="https://www.facebook.com/eiramyllek73" title="Facebook"><img src="icons/fi-social-facebook.svg" alt="Facebook Icon" /></a>
+                        <a class="item" href="https://twitter.com/Eiramyllek73?lang=en" title="Twitter"><img src="icons/fi-social-twitter.svg" alt="Twitter Icon" /></a>
+                        <a class="item" href="https://github.com/eiramyllek73" title="GitHub"><img src="icons/fi-social-github.svg" alt="Facebook Icon" /></a>
+                        <a class="item" href="http://instagram.com/eiramyllek73" title="Instagram"><img src="icons/fi-social-instagram.svg" alt="Instagram Icon" /></a>
+                        <a class="item" href="http://www.pinterest.com/eiramyllek73/" title="Pinterest"><img src="icons/fi-social-pinterest.svg" alt="Pinterest Icon" /></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="large-6 columns">
+                    <p>© Copyright Kelly M. McAlpine 2014</p>
+                </div>
+                <div class="large-6 columns">
+                    <ul class="inline-list right">
+                        <li><a href="privacypolicy.html">Private Stash</a></li>
+                        <li><a href="terms_and_conditions.html">T and C</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
     <!-- JavaScript Section -->
     <script src="js/jquery.js"></script>
     <script src="js/main.js"></script>
+    <script src="lib/createJS.js"></script>
+    <script src="lib/easelJS.js"></script>
+    <script src="lib/tweenJS.js"></script>
+
 </body>
 </html>

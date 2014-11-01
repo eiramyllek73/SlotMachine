@@ -16,13 +16,12 @@ Referenced examples from:  "Beginning HTML5 Games with CreateJS" by Brad Manders
 **/
 
 /* Variables for all images and text: */
-
-//1:  Loader Bar variables:
+// Loader Bar variables
 const LOADER_WIDTH = 400;
 var stage, loaderBar, loadInterval;
 var percentLoaded = 0;
 
-//2:  Variables for Slot Machine structure:
+// Variables for Slot Machine structure:
 var queue;
 var stage;
 
@@ -47,7 +46,7 @@ var resetButton;
 var resetButtonHover;
 var exitButton;
 
-//3:  changeable information variables:
+//Changeable information variables:
 var creditWindowText;
 var betWindowText;
 var paidWindowText;
@@ -55,8 +54,7 @@ var paidWindowText;
 var winRatioText;
 var playerTurnText;
 
-//4:  Value Amount variables:
-
+// Value Amount variables:
 var playerMoney = 1000;
 var winnings = 0;
 var jackpot = 5000;
@@ -76,36 +74,15 @@ var github = 0;
 var ie = 0;
 var blank = 0;
 
-
-
 function init()
 {
+    canvas = document.getElementById("slotCanvas");
+    stage = new createjs.Stage('canvas');
+    stage.enableMouseOver();
+
     queue = new createjs.LoadQueue();
-
-    //Install sound plugin for formats included 
     queue.installPlugin(createjs.Sound);
-    createjs.Sound.alternateExtensions = ["wav"];
-    createjs.Sound.alternateExtensions = ["mp3"];
-    setupStage();
-    buildLoaderBar();
-    startLoad();
-}
 
-function setupStage() {
-    stage = new createjs.Stage('slotCanvas');
-    createjs.Ticker.setFPS(60);
-    createjs.Ticker.addEventListener("tick", tick);
-}
-
-function tick(e) {
-    stage.update();
-}
-
-/* Preload function for game */
-function preload()
-{
-    queue.addEventListener("complete", loadComplete);
-  
     //Load all images & sounds for game - All sounds were downloaded from https://www.freesound.org/ 
     queue.loadManifest
         ([
@@ -141,10 +118,20 @@ function preload()
             {id:  "youLose", src: "sounds/youlose.wav" },
             {id:  "youWon", src: "sounds/youWon.wav" }
         ]);
+
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", handleTick);
+
+    drawSlotMachine();
 }
 
-function buildSlotMachine()
- {
+function handleTick()
+{
+    stage.update();
+}
+
+function drawSlotMachine()
+{
     //Slot-Machine background
     slotGame = new createjs.Container();
     createjs.Sound.play('welcome', createjs.Sound.INTERRUPT_NONE);
@@ -173,31 +160,6 @@ function buildSlotMachine()
     betLine.x = 74;
     betLine.y = 355;
 
-    //Betting Buttons
-    bet1Button = new createjs.Bitmap(queue.getResult('bet1Button'));
-    bet1Button.x = 125;
-    bet1Button.y = 640;
-
-    bet5Button = new createjs.Bitmap(queue.getResult('bet5Button'));
-    bet5Button.x = 193;
-    bet5Button.y = 640;
-
-    bet10Button = new createjs.Bitmap(queue.getResult('bet10Button'));
-    bet10Button.x = 268;
-    bet10Button.y = 640;
-
-    bet50Button = new createjs.Bitmap(queue.getResult('bet50Button'));
-    bet50Button.x = 125;
-    bet50Button.y = 701;
-
-    bet100Button = new createjs.Bitmap(queue.getResult('bet100Button'));
-    bet100Button.x = 193;
-    bet100Button.y = 701;
-
-    bet500Button = new createjs.Bitmap(queue.getResult('bet500Button'));
-    bet500Button.x = 268;
-    bet500Button.y = 701;
-
     //Action Buttons
     spinButton = new createjs.Bitmap(queue.getResult('spinButton'));
     spinButton.x = 438;
@@ -216,20 +178,7 @@ function buildSlotMachine()
     exitButton = new createjs.Bitmap(queue.getResult('exitButton'));
     exitButton.x = 782;
     exitButton.y = 655;
-    
 
-    spinButton.addEventListener("mouseover", function (event)
-    {
-        spinButton.visible = false;
-        spinButtonHover.visible = true;
-        if(!playerBet)
-        {
-            spinButtonHover.alpha = 0.5;
-            $('slotCanvas')
-        }
-    }
-    
-    );
     resetButton.addEventListener("click", resetGame);
     exitButton.addEventListener("click", endGame);
 
@@ -248,74 +197,144 @@ function buildSlotMachine()
 
     stage.addChild(slotMachineBase, creditsWindow, betWindow, paidWindow, bet1Button, bet10Button, bet5Button, bet50Button, bet100Button, bet500Button, spinButton, resetButton, exitButton, spinButtonH, resetButtonH, exitButtonH, blank, blank2, blank3);
 
-    showPlayerStats();
+    stage.addChild(slotGame);
+
 }
 
-/* Loader Bar functions from "Beginning HTML5 Games with CreateJS" pp26-28 */
-function buildLoaderBar()
+/* Utility function to show Player Stats */
+function showPlayerStats() {
+    winRatio = winNumber / turn;
+    $("#jackpot").text("Jackpot: " + jackpot);
+    $("#playerMoney").text("Player Money: " + playerMoney);
+    $("#playerTurn").text("Turn: " + turn);
+    $("#playerWins").text("Wins: " + winNumber);
+    $("#playerLosses").text("Losses: " + lossNumber);
+    $("#playerWinRatio").text("Win Ratio: " + (winRatio * 100).toFixed(2) + "%");
+}
+
+/* Utility function to reset all icon tallies */
+function resetIconTally() {
+    reddit = 0;
+    html = 0;
+    notepad = 0;
+    css = 0;
+    linux = 0;
+    github = 0;
+    ie = 0;
+    blanks = 0;
+}
+
+/* RESETS: */
+/* Utility function to reset the game*/
+function resetGame()
 {
-    loaderBar = new createjs.Shape();
-    loaderBar.x = loaderBar.y = 100;
-    loaderBar.graphics.setStrokeStyle(2);
-    loaderBar.graphics.beginStroke("#000");
-    loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH, 40);
-    stage.addChild(loaderBar);
+    //reset player stats
+    playerMoney = 1000;
+    winnings = 0;
+    jackpot = 5000;
+    turn = 0;
+    playerBet = 0;
+    winNumber = 0;
+    lossNumber = 0;
+    winRatio = 0;
+
+    //reset the Bet Buttons 
+    bet1Button.visible = true;
+    bet5Button.visible = true;
+    bet10Button.visible = true;
+    bet50Button.visible = true;
+    bet100Button.visible = true;
+    bet1500Button.visible = true;
+
+    //reset the reels 
+    slotGame.removeChild(reel1);
+    slotGame.removeChild(reel2);
+    slotGame.removeChild(reel3);
+
+    //return to default images
+    reel1 = new createjs.Bitmap(queue.getResult('blank'));
+    reel1.x = 169;
+    reel1.y = 300;
+    slotGame.addChild(reel1);
+
+    reel2 = new createjs.Bitmap(queue.getResult('blank'));
+    reel2.x = 426;
+    reel2.y = 312;
+    slotGame.addChild(reel2);
+
+    reel3 = new createjs.Bitmap(queue.getResult('blank'));
+    reel3.x = 679;
+    reel3.y = 298;
+    slotGame.addChild(reel3);
+    
+    //update all info
+    updateStats();
+
+    stage.update();
 }
 
-function updateLoaderBar()
-{
-    loaderBar.graphics.clear();
-    loaderBar.graphics.beginFill('#00ff00');
-    loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH * percentLoaded, 40);
-    loaderBar.graphics.endFill();
-    loaderBar.graphics.setStrokeStyle(2);
-    loaderBar.graphics.beginStroke("#000");
-    loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH, 40);
-    loaderBar.graphics.endStroke();
-}
-
-function startLoad()
-{
-    loadInterval = setInterval(updateLoad, 50);
-}
-function updateLoad()
-{
-    percentLoaded += .005;
-    updateLoaderBar();
-    if (percentLoaded >= 1)
-    {
-        clearInterval(loadInterval);
-        stage.removeChild(loaderBar);
-    }
-
-}
-
-
-/* Utility function to spin the reels only if play has enough money to place bet (check) */
-function spinreels()
-{
-    //check if the player has enough money to place bet/spin reels
-    if (playerMoney < 1)
-    {
-        endGame();
-    }
-
-    //Let Player know his/her bet exceeds balance
-    else if (playerBet > playerMoney)
-    {
-        alert("Apologies...You do not have enough funds to cover that bet.");
-    }
-
-    //If bet is good, continue
-    else if (playerBet <= playerMoney)
-    {
-        createjs.Sound.play("spin");
-        playerMoney -= playerBet;
-
-        Reels();
-    }
-}
 /* THE FOLLOWING CODE WAS PROVIDED BY TOM!! https://github.com/tsiliopoulos/ */
+/* Check to see if the player won the jackpot */
+function checkJackPot()
+{
+    /* compare two random values */
+    var jackPotTry = Math.floor(Math.random() * 51 + 1);
+    var jackPotWin = Math.floor(Math.random() * 51 + 1);
+    if (jackPotTry == jackPotWin)
+    {
+
+        //Kelly's added sound
+        createjs.Sound.play('youWon');
+        alert("You Won the $" + jackpot + " Jackpot!!");
+        playerMoney += jackpot;
+        jackpot = 1000;
+    }
+
+    //update all info
+    updateStats();
+
+    stage.update();
+}
+
+/* Utility function to show a win message and increase player money */
+function showWinMessage() 
+{
+    playerMoney += winnings;
+    $("div#winOrLose>p").text("You Won: $" + winnings);
+    resetIconTally();
+    checkJackPot();
+
+    //update all info
+    updateStats();
+
+    stage.update();
+}
+
+/* Utility function to show a loss message and reduce player money */
+function showLossMessage() 
+{
+    playerMoney -= playerBet;
+    $("div#winOrLose>p").text("You Lost!");
+    resetIconTally();
+
+    //update all info
+    updateStats();
+
+    stage.update();
+}
+
+/* Utility function to check if a value falls within a range of bounds */
+function checkRange(value, lowerBounds, upperBounds) 
+{
+    if (value >= lowerBounds && value <= upperBounds) 
+    {
+        return value;
+    }
+    else 
+    {
+        return !value;
+    }
+}
 /* When this function is called it determines the betLine results.
 e.g. Reddit - GitHub - CSS */
 function Reels()
@@ -323,7 +342,6 @@ function Reels()
     var result;
     var betLine = [" ", " ", " "];
     var outCome = [0, 0, 0];
-
     for (var spin = 0; spin < 3; spin++)
     {
         outCome[spin] = Math.floor((Math.random() * 65) + 1);
@@ -363,160 +381,9 @@ function Reels()
                 break;
         }
 
-        //display spin results
-        reel1 = result;
-        reel1.x = 169;
-        reel1.y = 300;
-        slotGame.addChild(reel1);
-
-        reel2 = result;
-        reel2.x = 426;
-        reel2.y = 312;
-        slotGame.addChild(reel2);
-
-        reel3 = result;
-        reel3.x = 679;
-        reel3.y = 298;
-        slotGame.addChild(reel3);
-
-        updateStats();
-
-        stage.update();
     }
-
     return betLine;
 }
-/* Utility function to show Player Stats */
-function showPlayerStats() {
-    winRatio = winNumber / turn;
-    $("#jackpot").text("Jackpot: " + jackpot);
-    $("#playerMoney").text("Player Money: " + playerMoney);
-    $("#playerTurn").text("Turn: " + turn);
-    $("#playerWins").text("Wins: " + winNumber);
-    $("#playerLosses").text("Losses: " + lossNumber);
-    $("#playerWinRatio").text("Win Ratio: " + (winRatio * 100).toFixed(2) + "%");
-}
-
-/* RESETS: */
-
-/* Utility function to reset the Bet Buttons */
-function resetBetButtons()
-{
-    bet1Button.visible = true;
-    bet5Button.visible = true;
-    bet10Button.visible = true;
-    bet50Button.visible = true;
-    bet100Button.visible = true;
-    bet1500Button.visible = true;
-}
-
-
-/* Utility function to reset all icon tallies */
-function resetIconTally()
-{
-    reddit = 0;
-    html = 0;
-    notepad = 0;
-    css = 0;
-    linux = 0;
-    github = 0;
-    ie = 0;
-    blanks = 0;
-}
-
-/* Utility function to reset the reels */
-function resetReels()
-{
-    slotGame.removeChild(reel1);
-    slotGame.removeChild(reel2);
-    slotGame.removeChild(reel3);
-    
-
-    reel1 = new createjs.Bitmap(queue.getResult('blank'));
-    reel1.x = 169;
-    reel1.y = 300;
-    slotGame.addChild(reel1);
-
-    reel2 = new createjs.Bitmap(queue.getResult('blank'));
-    reel2.x = 426;
-    reel2.y = 312;
-    slotGame.addChild(reel2);
-
-    reel3 = new createjs.Bitmap(queue.getResult('blank'));
-    reel3.x = 679;
-    reel3.y = 298;
-    slotGame.addChild(reel3);
-}
-
-
-/* Utility function to reset the player stats */
-function resetStats() {
-    playerMoney = 1000;
-    winnings = 0;
-    jackpot = 5000;
-    turn = 0;
-    playerBet = 0;
-    winNumber = 0;
-    lossNumber = 0;
-    winRatio = 0;
-
-    //update all info
-    updateStats();
-}
-
-
-/* THE FOLLOWING CODE WAS PROVIDED BY TOM!! https://github.com/tsiliopoulos/ */
-
-/* Check to see if the player won the jackpot */
-function checkJackPot() {
-    /* compare two random values */
-    var jackPotTry = Math.floor(Math.random() * 51 + 1);
-    var jackPotWin = Math.floor(Math.random() * 51 + 1);
-    if (jackPotTry == jackPotWin) {
-
-        //Kelly's added sound
-        createjs.Sound.play('youWon');
-        alert("You Won the $" + jackpot + " Jackpot!!");
-        playerMoney += jackpot;
-        jackpot = 1000;
-    }
-     
-    //update all info
-    updateStats();
-}
-
-/* Utility function to show a win message and increase player money */
-function showWinMessage() {
-    playerMoney += winnings;
-    $("div#winOrLose>p").text("You Won: $" + winnings);
-    resetIconTally();
-    checkJackPot();
-
-    //update all info
-    updateStats();
-}
-
-/* Utility function to show a loss message and reduce player money */
-function showLossMessage() {
-    playerMoney -= playerBet;
-    $("div#winOrLose>p").text("You Lost!");
-    resetIconTally();
-
-    //update all info
-    updateStats();
-}
-
-/* Utility function to check if a value falls within a range of bounds */
-function checkRange(value, lowerBounds, upperBounds) {
-    if (value >= lowerBounds && value <= upperBounds) {
-        return value;
-    }
-    else {
-        return !value;
-    }
-}
-
-
 
 /* This function calculates the player's winnings, if any */
 function determineWinnings()
@@ -597,39 +464,223 @@ function determineWinnings()
 
 }
 
-/* When the player clicks the spin button the game kicks off */
-$("#spinButton").click(function ()
+/* Utility function to start the game */
+function startGame()
 {
-    playerBet = $("div#betEntry>input").val();
-
-    if (playerMoney == 0)
+    if(playerMoney == 0)
     {
-        if (confirm("You ran out of Money! \nDo you want to play again?"))
+        createjs.Sound.play('youLose', createjs.Sound.INTERRUPT_NONE);
+        if(confirm("Apologies...You have now run out of funds. \nWould you like to re-mortgage your house and play again?"))
         {
-            resetAll();
+            resetGame();
             showPlayerStats();
         }
     }
+
     else if (playerBet > playerMoney)
     {
-        alert("Apologies...You do not have enough funds to cover that bet.");
+        createjs.Sound.play('noMatch', createjs.Sound.INTERRUPT_NONE);
+        alert("Apologies...You do not have the funds to cover that bet.");
     }
-    else if (playerBet < 0)
-    {
-        alert("All bets must be a positive $ amount.");
-    }
+    
     else if (playerBet <= playerMoney)
     {
         spinResult = Reels();
-        icons = spinResult[0] + " - " + spinResult[1] + " - " + spinResult[2];
-        $("div#result>p").text(icons);
+        
+        slotGame.removeChild(reel1);
+        slotGame.removeChild(reel2);
+        slotGame.removeChild(reel3);
+
+        //display spin results
+        reel1 = new createjs.Bitmap(spinResult[0]);
+        reel1.x = 169;
+        reel1.y = 300;
+        slotGame.addChild(reel1);
+
+        reel2 = new createjs.Bitmap(spinResult[1]);
+        reel2.x = 426;
+        reel2.y = 312;
+        slotGame.addChild(reel2);
+
+        reel3 = new createjs.Bitmap(spinResult[2]);
+        reel3.x = 679;
+        reel3.y = 298;
+        slotGame.addChild(reel3);
+
         determineWinnings();
         turn++;
+        updateStats();
         showPlayerStats();
+
+        stage.update();
     }
     else
     {
         alert("Please enter a valid bet amount");
     }
 
-});
+}
+
+/* Utility function to swap out text with new text based on outcome of last spin/turn */
+function updateStats()
+{
+    slotGame.removeChild(creditWindowText);
+    creditWindowText = new create.js.Text(playerMoney, "12px Calibri, yellow");
+    creditWindowText.x = 117;
+    creditWindowText.y = 522;
+    slotGame.addChild(creditWindowText);
+
+    slotGame.removeChild(betWindowText);
+    betWindowText = new createjs.text(playerBet, "12px Calibri, yellow");
+    betWindowText.x = 326;
+    betWindowText.y = 522;
+    slotGame.addChild(betWindowText);
+
+    slotGame.removeChild(paidWindowText);
+    paidWindowText = new createjs.text(winnings, "12px Calibri, yellow");
+    paidWindowText.x = 641;
+    paidWindowText.y = 522;
+    slotGame.addChild(paidWindowText);
+
+    stage.addChild(slotGame);
+
+}
+
+/* Loader Bar functions from "Beginning HTML5 Games with CreateJS" pp26-28 */
+function buildLoaderBar()
+{
+    loaderBar = new createjs.Shape();
+    loaderBar.x = loaderBar.y = 100;
+    loaderBar.graphics.setStrokeStyle(2);
+    loaderBar.graphics.beginStroke("#000");
+    loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH, 40);
+    stage.addChild(loaderBar);
+}
+
+function updateLoaderBar()
+{
+    loaderBar.graphics.clear();
+    loaderBar.graphics.beginFill('#00ff00');
+    loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH * percentLoaded, 40);
+    loaderBar.graphics.endFill();
+    loaderBar.graphics.setStrokeStyle(2);
+    loaderBar.graphics.beginStroke("#000");
+    loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH, 40);
+    loaderBar.graphics.endStroke();
+}
+
+function startLoad()
+{
+    loadInterval = setInterval(updateLoad, 50);
+}
+
+function updateLoad()
+{
+    percentLoaded += .005;
+    updateLoaderBar();
+    if (percentLoaded >= 1)
+    {
+        clearInterval(loadInterval);
+        stage.removeChild(loaderBar);
+    }
+}
+
+/* Utility function to position buttons and set values for each */
+function betButtons()
+{
+    bet1Button = new createjs.Bitmap(queue.getResult('bet1Button'));
+    bet1Button.x = 125;
+    bet1Button.y = 640;
+    slotGame.addChild(bet1Button);
+    bet1Button.addEventListener("click", function (event)
+    {
+        if (!playerBet)
+        {
+            playerBet = true;
+            bet1Button.visible = true;
+            playerBet = 1;
+            updateStats();
+        };
+    });
+
+    bet5Button = new createjs.Bitmap(queue.getResult('bet5Button'));
+    bet5Button.x = 193;
+    bet5Button.y = 640;
+    slotGame.addChild(bet5Button);
+    bet5Button.addEventListener("click", function (event)
+    {
+        if (!playerBet)
+        {
+            playerBet = true;
+            bet5Button.visible = true;
+            playerBet = 1;
+            updateStats();
+        };
+
+    });
+
+    bet10Button = new createjs.Bitmap(queue.getResult('bet10Button'));
+    bet10Button.x = 268;
+    bet10Button.y = 640;
+    slotGame.addChild(bet10Button);
+    bet10Button.addEventListener("click", function (event)
+    {
+        if (!playerBet)
+        {
+            playerBet = true;
+            bet10Button.visible = true;
+            playerBet = 1;
+            updateStats();
+        };
+
+    });
+
+    bet50Button = new createjs.Bitmap(queue.getResult('bet50Button'));
+    bet50Button.x = 125;
+    bet50Button.y = 701;
+    slotGame.addChild(bet50Button);
+    bet50Button.addEventListener("click", function (event)
+    {
+        if (!playerBet)
+        {
+            playerBet = true;
+            bet50Button.visible = true;
+            playerBet = 1;
+            updateStats();
+        };
+
+    });
+
+    bet100Button = new createjs.Bitmap(queue.getResult('bet100Button'));
+    bet100Button.x = 193;
+    bet100Button.y = 701;
+    slotGame.addChild(bet100Button);
+    bet100Button.addEventListener("click", function (event)
+    {
+        if (!playerBet)
+        {
+            playerBet = true;
+            bet100Button.visible = true;
+            playerBet = 1;
+            updateStats();
+        };
+
+    });
+
+    bet500Button = new createjs.Bitmap(queue.getResult('bet500Button'));
+    bet500Button.x = 268;
+    bet500Button.y = 701;
+    slotGame.addChild(bet500Button);
+    bet500Button.addEventListener("click", function (event)
+    {
+        if (!playerBet)
+        {
+            playerBet = true;
+            bet500Button.visible = true;
+            playerBet = 1;
+            updateStats();
+        };
+
+    });
+}
+

@@ -1,4 +1,57 @@
-﻿/// <reference path="jquery.js" />
+﻿///REFERENCE PATHS:
+/// <reference path="jquery.js" />
+/// <reference path="lib/createJS.js" />
+/// <reference path="lib/easelJS.js" />
+/// <reference path="lib/preloadJS.js" />
+/// <reference path="lib/soundJS.js" />
+/// <reference path="lib/tweenJS.js" />
+
+/**
+File Name: slotMachine.js
+Author: Kelly McAlpine #200269425
+Project Name: The 'Programmbler' Slot-Machine
+Last Updated: October 31, 2014
+Purpose: All jQuery & Javascript functions that make this game work, are located in this file
+**/
+
+/* Variables for all images and text: */
+
+//1:  Variables for Slot Machine structure:
+
+var queue;
+var stage;
+
+var slotGame;
+var slotMachineBase;
+var creditsWindow;
+var betWindow;
+var paidWindow;
+var reel1;
+var reel2;
+var reel3;
+var betLine;
+var bet1Button;
+var bet5Button;
+var bet10Button;
+var bet50Button;
+var bet100Button;
+var bet500Button;
+var spinButton;
+var spinButtonHover;
+var resetButton;
+var resetButtonHover;
+var exitButton;
+
+//2:  changeable information variables:
+var creditWindowText;
+var betWindowText;
+var paidWindowText;
+
+var winRatioText;
+var playerTurnText;
+
+//3:  Value Amount variables:
+
 var playerMoney = 1000;
 var winnings = 0;
 var jackpot = 5000;
@@ -16,7 +69,77 @@ var css = 0;
 var linux = 0;
 var github = 0;
 var ie = 0;
-var blanks = 0;
+var blank = 0;
+
+
+/* Preload function for game */
+function init()
+{
+    canvas = document.getElementById("slotCanvas");
+    stage = new createjs.Stage(canvas);
+
+    //Allow hovering
+    stage.enableMouseOver();
+    queue = new createjs.LoadQueue(false);
+
+    //Install sound plugin for formats included 
+    queue.installPlugin(createjs.Sound);
+    createjs.Sound.alternateExtensions = ["wav"];
+    createjs.Sound.alternateExtensions = ["mp3"];
+  
+    //Load all images & sounds for game - All sounds were downloaded from https://www.freesound.org/ 
+    queue.loadManifest
+        ([
+            {id:  "slotMachineBase", src: "images/slotmachine1.png" },
+            {id:  "betLine", src: "images/betLine.png" },
+            {id:  "creditsWindow", src:  "images/creditsWindow.png"},
+            {id:  "betWindow", src:  "images/betWindow.png"},
+            {id:  "paidWindow", src:  "images/paidWindow.png"},
+            {id:  "paidWindow", src:  "images/paidWindow.png"},
+            {id:  "bet1Button", src:  "images/bet1Button.png"},
+            {id:  "bet5Button", src:  "images/bet5Button.png"},
+            {id:  "bet10Button", src:  "images/bet10Button.png"},
+            {id:  "bet50Button", src:  "images/bet50Button.png"},
+            {id:  "bet100Button", src:  "images/bet100Button.png"},
+            {id:  "bet500Button", src:  "images/bet500Button.png"},
+            {id:  "spinButton", src:  "images/spinButton.png"},
+            {id:  "resetButton", src:  "images/resetButton.png"},
+            {id:  "exitButton", src:  "images/exitButton.png"},
+            {id:  "spinButtonHover", src:  "images/spinButtonH.png"},
+            {id:  "reddit", src:  "images/Reddit.png"},
+            {id:  "html", src:  "images/HTML-5.png"},
+            {id:  "notepad", src:  "images/Notepad++.png"},
+            {id:  "css", src:  "images/css3logo.png"},
+            {id:  "linux", src:  "images/OS-Linux.png"},
+            {id:  "github", src:  "images/Github.png"},
+            {id:  "ie", src:  "images/Internet-Explorer-10.png"},
+            {id:  "blank", src:  "images/blank.png"},
+            {id:  "resetButtonHover", src: "images/resetButtonH.png" },
+            {id:  "cashOut", src:  "sounds/cashOut.mp3"},
+            {id:  "noMatch", src: "sounds/noMatch.wav" },
+            {id:  "spin", src:  "sounds/spin.wav"},
+            {id:  "welcome", src: "sounds/welcome.wav" },
+            {id:  "youLose", src: "sounds/youlose.wav" },
+            {id:  "youWon", src: "sounds/youWon.wav" }
+        ]);
+
+    queue.on("complete", handleTick);
+}
+
+/* Utility Function for animations - some borrowed from EASELJS API http://www.createjs.com/Docs/EaselJS/files/easeljs_utils_Ticker.js.html#l340*/
+function handleTick(event)
+{
+    createjs.Ticker.addEventListener("tick", handleTick);
+    createjs.Ticker.setFPS(60);
+    stage.update();
+    loadSlotMachine();
+}
+
+/* Utility Function to set up GUI */
+function loadSlotMachine()
+{
+    createjs.
+}
 
 /* Utility function to show Player Stats */
 function showPlayerStats() {
@@ -28,6 +151,20 @@ function showPlayerStats() {
     $("#playerLosses").text("Losses: " + lossNumber);
     $("#playerWinRatio").text("Win Ratio: " + (winRatio * 100).toFixed(2) + "%");
 }
+
+/* RESETS: */
+
+/* Utility function to reset the Bet Buttons */
+function resetBetButtons()
+{
+    bet1Button.visible = true;
+    bet5Button.visible = true;
+    bet10Button.visible = true;
+    bet50Button.visible = true;
+    bet100Button.visible = true;
+    bet1500Button.visible = true;
+}
+
 
 /* Utility function to reset all icon tallies */
 function resetIconTally() {
@@ -41,8 +178,33 @@ function resetIconTally() {
     blanks = 0;
 }
 
+/* Utility function to reset the reels */
+function resetReels()
+{
+    slotGame.removeChild(reel1);
+    slotGame.removeChild(reel2);
+    slotGame.removeChild(reel3);
+    
+
+    reel1 = new createjs.Bitmap(queue.getResult('blank'));
+    reel1.x = 169;
+    reel1.y = 300;
+    slotGame.addChild(reel1);
+
+    reel2 = new createjs.Bitmap(queue.getResult('blank'));
+    reel2.x = 426;
+    reel2.y = 312;
+    slotGame.addChild(reel2);
+
+    reel3 = new createjs.Bitmap(queue.getResult('blank'));
+    reel3.x = 679;
+    reel3.y = 298;
+    slotGame.addChild(reel3);
+}
+
+
 /* Utility function to reset the player stats */
-function resetAll() {
+function resetStats() {
     playerMoney = 1000;
     winnings = 0;
     jackpot = 5000;
@@ -51,8 +213,13 @@ function resetAll() {
     winNumber = 0;
     lossNumber = 0;
     winRatio = 0;
+
+    //update all info
+    updateStats();
 }
 
+
+/* THE FOLLOWING CODE WAS PROVIDED BY TOM!! https://github.com/tsiliopoulos/ */
 
 /* Check to see if the player won the jackpot */
 function checkJackPot() {
@@ -60,10 +227,16 @@ function checkJackPot() {
     var jackPotTry = Math.floor(Math.random() * 51 + 1);
     var jackPotWin = Math.floor(Math.random() * 51 + 1);
     if (jackPotTry == jackPotWin) {
+
+        //Kelly's added sound
+        createjs.Sound.play('youWon');
         alert("You Won the $" + jackpot + " Jackpot!!");
         playerMoney += jackpot;
         jackpot = 1000;
     }
+     
+    //update all info
+    updateStats();
 }
 
 /* Utility function to show a win message and increase player money */
@@ -72,6 +245,9 @@ function showWinMessage() {
     $("div#winOrLose>p").text("You Won: $" + winnings);
     resetIconTally();
     checkJackPot();
+
+    //update all info
+    updateStats();
 }
 
 /* Utility function to show a loss message and reduce player money */
@@ -79,6 +255,9 @@ function showLossMessage() {
     playerMoney -= playerBet;
     $("div#winOrLose>p").text("You Lost!");
     resetIconTally();
+
+    //update all info
+    updateStats();
 }
 
 /* Utility function to check if a value falls within a range of bounds */

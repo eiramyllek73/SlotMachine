@@ -1,55 +1,26 @@
-﻿<!--File Name: index.html-->
-<!--Author: Kelly McAlpine #200269425-->
-<!--Website Name: The 'Programmbler' Slot-Machine-->
-<!--Purpose: A slot-machine game created with HTML5 and createJS-->
+﻿<!-- File Name: index.html -->
+<!-- Author: Kelly McAlpine #200269425 -->
+<!-- Project Name: The 'Programmbler' Slot-Machine -->
+<!-- Last Updated: October 31, 2014 -->
+<!-- Purpose: A slot-machine game created with HTML5, jQuery and createJS -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
     <title>The 'Programmbler' Slot-Machine</title>
     <!-- CSS Section -->
     <link href="css/reset.css" rel="stylesheet" />
     <link href="css/main.css" rel="stylesheet" />
+
 </head>
-<body>
+<body onload="init();">
     <canvas id="slotCanvas" width="950" height="780"></canvas>
-    <div>
-        <h1>Slot Machine</h1>
-        <div>
-            <h2>Player Statistics</h2>
-            <hr />
-            <ul id="playerStats">
-                <li id="jackpot">Jackpot: 500</li>
-                <li id="playerMoney">Player Money: 1000</li>
-                <li id="playerTurn">Turn: 0</li>
-                <li id="playerWins">Wins: 0</li>
-                <li id="playerLosses">Losses: 0</li>
-                <li id="playerWinRatio">Win Ratio: 0%</li>
-            </ul>
-            <hr />
-        </div>
-        <div id="betEntry">
-            <p>Place Your Bet Here</p>
-            <input id="playerBet" name="points" value="10">
-            <hr />
-        </div>
-        <button id="spinButton">Spin!</button>
-    </div>
-    <div id="result">
-        <h2>Spin Result</h2>
-        <hr />
-        <p></p>
-    </div>
-    <hr />
-    <div id="winOrLose">
-        <p></p>
-    </div>
+   
     <footer class="row">
         <div class="large-12 columns">
             <div class="panel">
                 <h4>Social Media Anyone?</h4>
-
                 <div class="row">
                     <div class="large-12 columns">
                         <p>I'm all over the net like a dog on a bone.</p>
@@ -66,7 +37,7 @@
             </div>
             <div class="row">
                 <div class="large-6 columns">
-                    <p>© Copyright Kelly M. McAlpine 2014</p>
+                    <p>© Copyright Kelly M. McAlpine 2014 ~ The 'Programmbler' was created with support from <a href ="https://github.com/tsiliopoulos/slotmachine">tsiliopoulos</a> and <a href="http://www.createjs.com/#!/CreateJS">CREATEJS</a></p>
                 </div>
                 <div class="large-6 columns">
                     <ul class="inline-list right">
@@ -77,12 +48,13 @@
             </div>
         </div>
     </footer>
+
     <!-- JavaScript Section -->
-    <script src="js/jquery.js"></script>
-    <script src="js/main.js"></script>
-    <script src="lib/createJS.js"></script>
-    <script src="lib/easelJS.js"></script>
-    <script src="lib/tweenJS.js"></script>
+    <script src="Scripts/jquery-2.1.1.min.js"></script>
+    <script src="Scripts/lib/easelJS.js"></script>
+    <script src="Scripts/slotMachine.js"></script>
+   
+    
 
 </body>
 </html>

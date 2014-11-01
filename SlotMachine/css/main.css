@@ -1,7 +1,19 @@
-﻿body {
+﻿/*
+File Name: slotMachine.js
+Author: Kelly McAlpine #200269425
+Project Name: The 'Programmbler' Slot-Machine
+Last Updated: October 31, 2014
+Purpose: All styling for Slot-Machine is in this file.
+*/
+
+body 
+{
+    background-image:url("images/slotmachine1.png")
 }
-ul#playerStats {
-list-style-type: none;
-padding: 0;
-margin: 5px;
+
+ul#playerStats 
+{
+    list-style-type: none;
+    padding: 0;
+    margin: 5px;
 }

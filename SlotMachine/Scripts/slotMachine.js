@@ -12,12 +12,17 @@ Author: Kelly McAlpine #200269425
 Project Name: The 'Programmbler' Slot-Machine
 Last Updated: October 31, 2014
 Purpose: All jQuery & Javascript functions that make this game work, are located in this file
+Referenced examples from:  "Beginning HTML5 Games with CreateJS" by Brad Manderscheid
 **/
 
 /* Variables for all images and text: */
 
-//1:  Variables for Slot Machine structure:
+//1:  Loader Bar variables:
+const LOADER_WIDTH = 400;
+var stage, loaderBar, loadInterval;
+var percentLoaded = 0;
 
+//2:  Variables for Slot Machine structure:
 var queue;
 var stage;
 
@@ -42,7 +47,7 @@ var resetButton;
 var resetButtonHover;
 var exitButton;
 
-//2:  changeable information variables:
+//3:  changeable information variables:
 var creditWindowText;
 var betWindowText;
 var paidWindowText;
@@ -50,7 +55,7 @@ var paidWindowText;
 var winRatioText;
 var playerTurnText;
 
-//3:  Value Amount variables:
+//4:  Value Amount variables:
 
 var playerMoney = 1000;
 var winnings = 0;
@@ -72,20 +77,68 @@ var ie = 0;
 var blank = 0;
 
 
-/* Preload function for game */
+
 function init()
 {
-    canvas = document.getElementById("slotCanvas");
-    stage = new createjs.Stage(canvas);
-
-    //Allow hovering
-    stage.enableMouseOver();
-    queue = new createjs.LoadQueue(false);
+    queue = new createjs.LoadQueue();
 
     //Install sound plugin for formats included 
     queue.installPlugin(createjs.Sound);
     createjs.Sound.alternateExtensions = ["wav"];
     createjs.Sound.alternateExtensions = ["mp3"];
+    setupStage();
+    buildLoaderBar();
+    startLoad();
+}
+
+function setupStage() {
+    stage = new createjs.Stage('slotCanvas');
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", tick);
+}
+
+function tick(e) {
+    stage.update();
+}
+
+/* Loader Bar functions from "Beginning HTML5 Games with CreateJS" pp26-28 */
+function buildLoaderBar() {
+    loaderBar = new createjs.Shape();
+    loaderBar.x = loaderBar.y = 100;
+    loaderBar.graphics.setStrokeStyle(2);
+    loaderBar.graphics.beginStroke("#000");
+    loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH, 40);
+    stage.addChild(loaderBar);
+}
+
+function updateLoaderBar() {
+    loaderBar.graphics.clear();
+    loaderBar.graphics.beginFill('#00ff00');
+    loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH * percentLoaded, 40);
+    loaderBar.graphics.endFill();
+    loaderBar.graphics.setStrokeStyle(2);
+    loaderBar.graphics.beginStroke("#000");
+    loaderBar.graphics.drawRect(0, 0, LOADER_WIDTH, 40);
+    loaderBar.graphics.endStroke();
+}
+
+function startLoad() {
+    loadInterval = setInterval(updateLoad, 50);
+}
+function updateLoad() {
+    percentLoaded += .005;
+    updateLoaderBar();
+    if (percentLoaded >= 1) {
+        clearInterval(loadInterval);
+        stage.removeChild(loaderBar);
+    }
+
+    buildSlotMachine();
+}
+/* Preload function for game */
+function preload()
+{
+    queue.addEventListener("complete", loadComplete);
   
     //Load all images & sounds for game - All sounds were downloaded from https://www.freesound.org/ 
     queue.loadManifest
@@ -123,23 +176,98 @@ function init()
             {id:  "youWon", src: "sounds/youWon.wav" }
         ]);
 
-    queue.on("complete", handleTick);
 }
 
-/* Utility Function for animations - some borrowed from EASELJS API http://www.createjs.com/Docs/EaselJS/files/easeljs_utils_Ticker.js.html#l340*/
-function handleTick(event)
-{
-    createjs.Ticker.addEventListener("tick", handleTick);
-    createjs.Ticker.setFPS(60);
+function buildSlotMachine()
+ {
+    //Slot-Machine background
+    createjs.Sound.play('welcome', createjs.Sound.INTERRUPT_NONE);
+
+    slotMachineBase = new createjs.Bitmap(queue.getResult('slotMachineBase'));
+    slotMachineBase.x = 0;
+    slotMachineBase.y = 0;
+
+    //Credits Window
+    creditsWindow = new createjs.Bitmap(queue.getResult('creditsWindow'));
+    creditsWindow.x = 117;
+    creditsWindow.y = 522;
+
+    //Bet Window
+    betWindow = new createjs.Bitmap(queue.getResult('betWindow'));
+    betWindow.x = 376;
+    betWindow.y = 522;
+
+    //Winnings Window
+    paidWindow = new createjs.Bitmap(queue.getResult('paidWindow'));
+    paidWindow.x = 641;
+    paidWindow.y = 522;
+
+    //Bet Line
+    betLine = new createjs.Bitmap(queue.getResult('betWindow'));
+    betLine.x = 74;
+    betLine.y = 355;
+
+    //Betting Buttons
+    bet1Button = new createjs.Bitmap(queue.getResult('bet1Button'));
+    bet1Button.x = 125;
+    bet1Button.y = 640;
+
+    bet5Button = new createjs.Bitmap(queue.getResult('bet5Button'));
+    bet5Button.x = 193;
+    bet5Button.y = 640;
+
+    bet10Button = new createjs.Bitmap(queue.getResult('bet10Button'));
+    bet10Button.x = 268;
+    bet10Button.y = 640;
+
+    bet50Button = new createjs.Bitmap(queue.getResult('bet50Button'));
+    bet50Button.x = 125;
+    bet50Button.y = 701;
+
+    bet100Button = new createjs.Bitmap(queue.getResult('bet100Button'));
+    bet100Button.x = 193;
+    bet100Button.y = 701;
+
+    bet500Button = new createjs.Bitmap(queue.getResult('bet500Button'));
+    bet500Button.x = 268;
+    bet500Button.y = 701;
+
+    //Action Buttons
+    spinButton = new createjs.Bitmap(queue.getResult('spinButton'));
+    spinButton.x = 438;
+    spinButton.y = 655;
+
+    resetButton = new createjs.Bitmap(queue.getResult('restButton'));
+    resetButton.x = 615;
+    resetButton.y = 655;
+
+    exitButton = new createjs.Bitmap(queue.getResult('exitButton'));
+    exitButton.x = 782;
+    exitButton.y = 655;
+
+    spinButton.addEventListener("click", spinReels);
+    resetButton.addEventListener("click", resetGame);
+    exitButton.addEventListener("click", endGame);
+
+    //Default Reel Images ('icons')
+    blank = new createjs.Bitmap(queue.getResult('blank'));
+    blank.x = 155;
+    blank.y = 298;
+
+    blank2 = new createjs.Bitmap(queue.getResult('blank'));
+    blank2.x = 413;
+    blank2.y = 298;
+
+    blank3 = new createjs.Bitmap(queue.getResult('blank'));
+    blank3.x = 679;
+    blank3.y = 298;
+
+    stage.addChild(slotMachineBase, creditsWindow, betWindow, paidWindow, bet1Button, bet10Button, bet5Button, bet50Button, bet100Button, bet500Button, spinButton, resetButton, exitButton, blank, blank2, blank3);
+
+    showPlayerStats();
     stage.update();
-    loadSlotMachine();
 }
 
-/* Utility Function to set up GUI */
-function loadSlotMachine()
-{
-    createjs.
-}
 
 /* Utility function to show Player Stats */
 function showPlayerStats() {
